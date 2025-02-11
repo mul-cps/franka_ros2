@@ -35,7 +35,7 @@ def test_load_with_gripper():
 def test_load_with_fake_hardware():
     urdf = xacro.process_file(panda_xacro_file_name,
                               mappings={'use_fake_hardware': 'true'}).toxml()
-    assert urdf.find('fake_components/GenericSystem') != -1
+    assert urdf.find('mock_components/GenericSystem') != -1
 
 
 def test_load_with_robot_ip():
