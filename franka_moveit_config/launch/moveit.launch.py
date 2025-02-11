@@ -23,10 +23,40 @@ from launch.actions import (DeclareLaunchArgument, ExecuteProcess, IncludeLaunch
                             SetEnvironmentVariable, Shutdown)
 from launch.conditions import UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitution import Substitution
+from launch.substitutions import (Command, FindExecutable, LaunchConfiguration,
+                                  NotSubstitution, PathJoinSubstitution)
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 import yaml
+
+
+# backport 'IfElseSubstitution' from 'launch':
+# https://github.com/ros2/launch/blob/3.7.1/launch/launch/substitutions/if_else_substitution.py
+class CustomIfElseSubstitution(Substitution):
+    def __init__(self, condition, if_value, else_value) -> None:
+        from launch.utilities import normalize_to_list_of_substitutions
+        super().__init__()
+        self._condition = normalize_to_list_of_substitutions(condition)
+        self._if_value = normalize_to_list_of_substitutions(if_value)
+        self._else_value = normalize_to_list_of_substitutions(else_value)
+
+    @classmethod
+    def parse(cls, data):
+        kwargs = {'condition': data[0], 'if_value': data[1], 'else_value': data[2]}
+        return cls, kwargs
+
+    def describe(self):
+        return f'IfElseSubstitution({self._condition}, {self._if_value}, {self._else_value})'
+
+    def perform(self, context):
+        from launch.utilities import perform_substitutions
+        from launch.utilities.type_utils import perform_typed_substitution
+
+        if perform_typed_substitution(context, self._condition, bool):
+            return perform_substitutions(context, self._if_value)
+        else:
+            return perform_substitutions(context, self._else_value)
 
 
 def load_yaml(package_name, file_path):
@@ -169,11 +199,18 @@ def generate_launch_description():
         parameters=[robot_description],
     )
 
-    ros2_controllers_path = os.path.join(
-        get_package_share_directory('franka_moveit_config'),
-        'config',
-        'panda_ros_controllers.yaml',
+    ros2_controllers_path = CustomIfElseSubstitution(
+        condition=NotSubstitution(use_fake_hardware),
+        if_value=os.path.join(
+            get_package_share_directory('franka_moveit_config'),
+            'config', 'panda_ros_controllers.yaml',
+        ),
+        else_value=os.path.join(
+            get_package_share_directory('moveit_resources_panda_moveit_config'),
+            'config', 'ros2_controllers.yaml',
+        ),
     )
+
     ros2_control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
