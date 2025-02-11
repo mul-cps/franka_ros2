@@ -20,7 +20,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription,
-                            Shutdown)
+                            SetEnvironmentVariable, Shutdown)
 from launch.conditions import UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
@@ -181,6 +181,8 @@ def generate_launch_description():
         on_exit=Shutdown(),
     )
 
+    env_lc = SetEnvironmentVariable(name='LC_NUMERIC', value='C')
+
     # Load controllers
     load_controllers = []
     for controller in ['panda_arm_controller', 'joint_state_broadcaster']:
@@ -228,7 +230,8 @@ def generate_launch_description():
                           use_fake_hardware_parameter_name: use_fake_hardware}.items(),
     )
     return LaunchDescription(
-        [robot_arg,
+        [env_lc,
+         robot_arg,
          use_fake_hardware_arg,
          fake_sensor_commands_arg,
          db_arg,
@@ -238,7 +241,7 @@ def generate_launch_description():
          ros2_control_node,
          joint_state_publisher,
          franka_robot_state_broadcaster,
-         gripper_launch_file
+         gripper_launch_file,
          ]
         + load_controllers
     )
