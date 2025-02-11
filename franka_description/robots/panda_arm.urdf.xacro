@@ -13,6 +13,18 @@
     <xacro:include filename="$(find franka_description)/robots/hand.xacro"/>
     <xacro:hand ns="$(arg arm_id)" rpy="0 0 ${-pi/4}" connected_to="$(arg arm_id)_link8" safety_distance="0.03"/>
   </xacro:if>
-  <xacro:include filename="$(find franka_description)/robots/panda_arm.ros2_control.xacro"/>
-  <xacro:panda_arm_ros2_control ns="$(arg arm_id)" robot_ip="$(arg robot_ip)" use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <xacro:unless value="$(arg use_fake_hardware)">
+    <xacro:include filename="$(find franka_description)/robots/panda_arm.ros2_control.xacro"/>
+    <xacro:panda_arm_ros2_control ns="$(arg arm_id)" robot_ip="$(arg robot_ip)" use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)"/>
+  </xacro:unless>
+
+  <xacro:if value="$(arg use_fake_hardware)">
+    <!-- mock system from 'moveit_resources_panda_moveit_config' -->
+    <!-- https://github.com/moveit/moveit_resources/blob/3.1.0/panda_moveit_config/config/panda.urdf.xacro -->
+    <xacro:include filename="$(find moveit_resources_panda_moveit_config)/config/panda.ros2_control.xacro"/>
+    <xacro:include filename="$(find moveit_resources_panda_moveit_config)/config/panda_hand.ros2_control.xacro"/>
+    <xacro:panda_ros2_control name="PandaFakeSystem" initial_positions_file="$(find moveit_resources_panda_moveit_config)/config/initial_positions.yaml" ros2_control_hardware_type="mock_components"/>
+    <xacro:panda_hand_ros2_control name="PandaHandFakeSystem" ros2_control_hardware_type="mock_components"/>
+  </xacro:if>
 </robot>
