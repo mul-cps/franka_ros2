@@ -137,9 +137,8 @@ TEST(
     } else {
       EXPECT_EQ(states[i].get_name(), joint_name + "/" + k_effort_controller);
     }
-#ifdef HW_HAS_GET_BY_REF
-    double val = 0;
-    EXPECT_TRUE(states[i].get_value(val));
+#ifdef HW_HAS_GET_OPT
+    const double val = states[i].get_optional().value();
 #else
     const double val = states[i].get_value();
 #endif
@@ -173,9 +172,8 @@ TEST(
   auto states = franka_hardware_interface.export_state_interfaces();
   EXPECT_EQ(states[state_interface_size - 1].get_name(),
             "panda/robot_model");  // Last state interface is the robot model state
-#ifdef HW_HAS_GET_BY_REF
-  double val = 0;
-  EXPECT_TRUE(states[state_interface_size - 1].get_value(val));
+#ifdef HW_HAS_GET_OPT
+  const double val = states[state_interface_size - 1].get_optional().value();
 #else
   const double val = states[state_interface_size - 1].get_value();
 #endif
@@ -210,9 +208,8 @@ TEST(
   auto states = franka_hardware_interface.export_state_interfaces();
   EXPECT_EQ(states[state_interface_size - 2].get_name(),
             "panda/robot_state");  // Last state interface is the robot model state
-#ifdef HW_HAS_GET_BY_REF
-  double val = 0;
-  EXPECT_TRUE(states[state_interface_size - 2].get_value(val));
+#ifdef HW_HAS_GET_OPT
+  const double val = states[state_interface_size - 2].get_optional().value();
 #else
   const double val = states[state_interface_size - 2].get_value();
 #endif
