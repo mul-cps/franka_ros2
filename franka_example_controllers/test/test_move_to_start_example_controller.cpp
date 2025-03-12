@@ -27,9 +27,8 @@
 const double k_EPS = 1e-5;
 
 void exp_val_near(const CommandInterface& cmdintf) {
-#ifdef HW_HAS_GET_BY_REF
-  double val = 0;
-  EXPECT_TRUE(cmdintf.get_value(val));
+#ifdef HW_HAS_GET_OPT
+  const double val = cmdintf.get_optional().value();
 #else
   const double val = cmdintf.get_value();
 #endif

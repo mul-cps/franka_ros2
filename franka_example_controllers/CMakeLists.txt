@@ -57,6 +57,9 @@ target_link_libraries(${PROJECT_NAME} franka_example_controllers_parameters Fran
 if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.20")
     target_compile_definitions(${PROJECT_NAME} PRIVATE HW_HAS_SET_NODISCARD)
 endif()
+if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE HW_HAS_GET_OPT)
+endif()
 
 pluginlib_export_plugin_description_file(
         controller_interface franka_example_controllers.xml)
@@ -113,8 +116,8 @@ if(BUILD_TESTING)
         ${PROJECT_NAME}_gravity_test
         PUBLIC controller_interface_VERSION_MAJOR=${controller_interface_VERSION_MAJOR}
     )
-    if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.20")
-        target_compile_definitions(${PROJECT_NAME}_gravity_test PRIVATE HW_HAS_GET_BY_REF)
+    if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
+        target_compile_definitions(${PROJECT_NAME}_gravity_test PRIVATE HW_HAS_GET_OPT)
     endif()
 
     ament_add_gmock(${PROJECT_NAME}_move_to_start_test test/test_move_to_start_example_controller.cpp)
@@ -125,8 +128,8 @@ if(BUILD_TESTING)
         ${PROJECT_NAME}_move_to_start_test
         PUBLIC controller_interface_VERSION_MAJOR=${controller_interface_VERSION_MAJOR}
     )
-    if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.20")
-        target_compile_definitions(${PROJECT_NAME}_move_to_start_test PRIVATE HW_HAS_GET_BY_REF)
+    if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
+        target_compile_definitions(${PROJECT_NAME}_move_to_start_test PRIVATE HW_HAS_GET_OPT)
     endif()
 
     if(CHECK_TIDY)

@@ -129,8 +129,13 @@ void JointImpedanceExampleController::updateJointStates() {
     assert(position_interface.get_interface_name() == "position");
     assert(velocity_interface.get_interface_name() == "velocity");
 
+#ifdef HW_HAS_GET_OPT
+    q_(i) = position_interface.get_optional().value();
+    dq_(i) = velocity_interface.get_optional().value();
+#else
     q_(i) = position_interface.get_value();
     dq_(i) = velocity_interface.get_value();
+#endif
   }
 }
 
