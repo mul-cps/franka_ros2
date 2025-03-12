@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <gmock/gmock.h>
-#include <exception>
 #include <rclcpp/rclcpp.hpp>
 
 #include <franka_hardware/franka_hardware_interface.hpp>
