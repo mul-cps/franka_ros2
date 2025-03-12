@@ -159,7 +159,15 @@ bool FrankaRobotState::get_values_as_message(franka_msgs::msg::FrankaRobotState&
                    });
 
   if (franka_state_interface != state_interfaces_.end()) {
+#ifdef HW_HAS_GET_OPT
+    robot_state_ptr =
+        bit_cast<franka::RobotState*>((*franka_state_interface)
+                                          .get()
+                                          .get_optional()
+                                          .value_or(std::numeric_limits<double>::quiet_NaN()));
+#else
     robot_state_ptr = bit_cast<franka::RobotState*>((*franka_state_interface).get().get_value());
+#endif
   } else {
     RCLCPP_ERROR(rclcpp::get_logger("franka_state_semantic_component"),
                  "Franka state interface does not exist! Did you assign the loaned state in the "
