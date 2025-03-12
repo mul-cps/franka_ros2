@@ -24,6 +24,9 @@ add_library(franka_semantic_components SHARED src/franka_robot_state.cpp src/fra
 target_include_directories(franka_semantic_components PRIVATE include)
 target_link_libraries(franka_semantic_components Franka::Franka)
 ament_target_dependencies(franka_semantic_components ${THIS_PACKAGE_INCLUDE_DEPENDS})
+if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
+    target_compile_definitions(franka_semantic_components PRIVATE HW_HAS_GET_OPT)
+endif()
 
 install(TARGETS franka_semantic_components DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include)
