@@ -108,11 +108,9 @@ controller_interface::return_type FrankaRobotStateBroadcaster::update(
       return controller_interface::return_type::ERROR;
     }
     realtime_franka_state_publisher->unlockAndPublish();
-    return controller_interface::return_type::OK;
-
-  } else {
-    return controller_interface::return_type::ERROR;
   }
+
+  return controller_interface::return_type::OK;
 }
 
 }  // namespace franka_robot_state_broadcaster
