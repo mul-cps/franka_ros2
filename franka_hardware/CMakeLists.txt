@@ -30,21 +30,25 @@ target_include_directories(
         PRIVATE
         include
 )
-ament_target_dependencies(
-        franka_hardware
-        hardware_interface
-        Franka
-        pluginlib
-        rclcpp
-        franka_msgs
+target_link_libraries(franka_hardware PUBLIC
+        ${franka_msgs_TARGETS}
+        hardware_interface::hardware_interface
+        hardware_interface::mock_components
+        pluginlib::pluginlib
+        rclcpp::rclcpp
+        Franka::Franka
 )
 pluginlib_export_plugin_description_file(hardware_interface franka_hardware.xml)
 
 
 install(
         TARGETS franka_hardware
+        EXPORT franka_hardwareTargets
         DESTINATION lib
+        INCLUDES
+        DESTINATION include
 )
+
 install(
         DIRECTORY include/
         DESTINATION include
@@ -84,6 +88,7 @@ ament_export_include_directories(
 ament_export_libraries(
         franka_hardware
 )
+ament_export_targets(franka_hardwareTargets HAS_LIBRARY_TARGET)
 ament_export_dependencies(
         hardware_interface
         pluginlib
