@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        distribution: ["humble", "jazzy"]
+        distribution: ["jazzy"]
 
     container:
       image: ros:${{ matrix.distribution }}-ros-core
