@@ -48,11 +48,23 @@ target_include_directories(
 
 generate_parameter_library(franka_robot_state_broadcaster_parameters src/franka_robot_state_broadcaster_parameters.yaml)
 
-target_link_libraries(franka_robot_state_broadcaster
-                      PUBLIC franka_robot_state_broadcaster_parameters Franka::Franka)
-ament_target_dependencies(franka_robot_state_broadcaster PUBLIC
-                          ${THIS_PACKAGE_INCLUDE_DEPENDS})
-
+target_link_libraries(franka_robot_state_broadcaster PUBLIC
+                      franka_semantic_components::franka_semantic_components
+                      franka_robot_state_broadcaster_parameters
+                      Franka::Franka
+                      ${builtin_interfaces_TARGETS}
+                      ${control_msgs_TARGETS}
+                      ${franka_msgs_TARGETS}
+                      ${sensor_msgs_TARGETS}
+                      controller_interface::controller_interface
+                      controller_manager::controller_manager
+                      pluginlib::pluginlib
+                      rclcpp_lifecycle::rclcpp_lifecycle
+                      rcutils::rcutils
+                      realtime_tools::realtime_tools
+                      realtime_tools::thread_priority
+                      sensor_msgs::sensor_msgs_library
+)
 
 pluginlib_export_plugin_description_file(controller_interface franka_robot_state_broadcaster.xml)
 
@@ -97,8 +109,13 @@ if(BUILD_TESTING)
         test/test_franka_robot_state_broadcaster.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/franka_robot_state_broadcaster_parameters.yaml)
     target_include_directories(${PROJECT_NAME}_test PRIVATE include)
-    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
-    ament_target_dependencies(${PROJECT_NAME}_test controller_manager hardware_interface ros2_control_test_assets)
+    target_link_libraries(${PROJECT_NAME}_test
+        ${PROJECT_NAME}
+        controller_manager::controller_manager
+        hardware_interface::hardware_interface
+        hardware_interface::mock_components
+        ros2_control_test_assets::ros2_control_test_assets
+    )
     target_compile_definitions(
         ${PROJECT_NAME}_test
         PUBLIC controller_interface_VERSION_MAJOR=${controller_interface_VERSION_MAJOR}
@@ -106,8 +123,10 @@ if(BUILD_TESTING)
 
     ament_add_gmock(test_load_franka_robot_state_broadcaster test/test_load_franka_robot_state_broadcaster.cpp)
     target_include_directories(test_load_franka_robot_state_broadcaster PRIVATE include)
-    target_link_libraries(test_load_franka_robot_state_broadcaster ${PROJECT_NAME})
-    ament_target_dependencies(test_load_franka_robot_state_broadcaster controller_manager)
+    target_link_libraries(test_load_franka_robot_state_broadcaster
+        ${PROJECT_NAME}
+        controller_manager::controller_manager
+    )
 endif()
 
 ament_export_include_directories(

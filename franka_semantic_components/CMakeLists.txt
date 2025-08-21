@@ -22,13 +22,25 @@ endforeach()
 
 add_library(franka_semantic_components SHARED src/franka_robot_state.cpp src/franka_robot_model.cpp)
 target_include_directories(franka_semantic_components PRIVATE include)
-target_link_libraries(franka_semantic_components Franka::Franka)
-ament_target_dependencies(franka_semantic_components ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(franka_semantic_components PUBLIC
+    Franka::Franka
+    franka_hardware::franka_hardware
+    ${franka_msgs_TARGETS}
+    controller_interface::controller_interface
+    hardware_interface::hardware_interface
+    hardware_interface::mock_components
+    rclcpp_lifecycle::rclcpp_lifecycle
+)
 if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
     target_compile_definitions(franka_semantic_components PRIVATE HW_HAS_GET_OPT)
 endif()
 
-install(TARGETS franka_semantic_components DESTINATION lib)
+install(TARGETS franka_semantic_components
+  EXPORT franka_semantic_componentsTargets
+  DESTINATION lib
+  INCLUDES
+  DESTINATION include
+)
 install(DIRECTORY include/ DESTINATION include)
 
 if(BUILD_TESTING)
@@ -59,28 +71,26 @@ if(BUILD_TESTING)
   target_include_directories(test_franka_robot_state PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   target_link_libraries(test_franka_robot_state
     franka_semantic_components
-  )
-  ament_target_dependencies(test_franka_robot_state
-    controller_interface
-    hardware_interface
-    franka_msgs
-    Franka
+    ${franka_msgs_TARGETS}
+    controller_interface::controller_interface
+    hardware_interface::hardware_interface
+    hardware_interface::mock_components
+    Franka::Franka
   )
   ament_add_gmock(test_franka_robot_model test/franka_robot_model_test.cpp)
   target_include_directories(test_franka_robot_model PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
   target_link_libraries(test_franka_robot_model
     franka_semantic_components
-  )
-  ament_target_dependencies(test_franka_robot_model
-    controller_interface
-    hardware_interface
-    franka_msgs
-    Franka
+    ${franka_msgs_TARGETS}
+    controller_interface::controller_interface
+    hardware_interface::hardware_interface
+    hardware_interface::mock_components
+    Franka::Franka
   )
 endif()
 
 ament_export_include_directories(include)
 ament_export_libraries(franka_semantic_components)
+ament_export_targets(franka_semantic_componentsTargets HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
