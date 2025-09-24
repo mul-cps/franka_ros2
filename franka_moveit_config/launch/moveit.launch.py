@@ -34,6 +34,7 @@ import yaml
 # backport 'IfElseSubstitution' from 'launch':
 # https://github.com/ros2/launch/blob/3.7.1/launch/launch/substitutions/if_else_substitution.py
 class CustomIfElseSubstitution(Substitution):
+
     def __init__(self, condition, if_value, else_value) -> None:
         from launch.utilities import normalize_to_list_of_substitutions
         super().__init__()
