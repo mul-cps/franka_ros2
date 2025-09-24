@@ -56,6 +56,7 @@ class FrankaRobotStateBroadcaster : public controller_interface::ControllerInter
   std::shared_ptr<realtime_tools::RealtimePublisher<franka_msgs::msg::FrankaRobotState>>
       realtime_franka_state_publisher;
   std::unique_ptr<franka_semantic_components::FrankaRobotState> franka_robot_state;
+  franka_msgs::msg::FrankaRobotState msg_state;
 };
 
 }  // namespace franka_robot_state_broadcaster

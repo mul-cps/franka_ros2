@@ -98,16 +98,22 @@ controller_interface::CallbackReturn FrankaRobotStateBroadcaster::on_deactivate(
 controller_interface::return_type FrankaRobotStateBroadcaster::update(
     const rclcpp::Time& time,
     const rclcpp::Duration& /*period*/) {
-  if (realtime_franka_state_publisher && realtime_franka_state_publisher->trylock()) {
-    realtime_franka_state_publisher->msg_.header.stamp = time;
-
-    if (!franka_robot_state->get_values_as_message(realtime_franka_state_publisher->msg_)) {
+  if (realtime_franka_state_publisher) {
+    // get state
+    if (!franka_robot_state->get_values_as_message(msg_state)) {
       RCLCPP_ERROR(get_node()->get_logger(),
                    "Failed to get franka state via franka state interface.");
-      realtime_franka_state_publisher->unlock();
       return controller_interface::return_type::ERROR;
     }
-    realtime_franka_state_publisher->unlockAndPublish();
+
+    // update time stamp
+    msg_state.header.stamp = time;
+
+    // publish state
+    if (!realtime_franka_state_publisher->try_publish(msg_state)) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Cannot publish franka state.");
+      return controller_interface::return_type::ERROR;
+    }
   }
 
   return controller_interface::return_type::OK;
