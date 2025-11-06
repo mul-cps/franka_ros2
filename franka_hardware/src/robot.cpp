@@ -18,6 +18,7 @@
 #include <mutex>
 
 #include <franka/control_tools.h>
+#include <franka/exception.h>
 #include <rclcpp/logging.hpp>
 
 namespace franka_hardware {
@@ -63,18 +64,30 @@ void Robot::initializeTorqueControl() {
   assert(isStopped());
   stopped_ = false;
   const auto kTorqueControl = [this]() {
-    robot_->control(
-        [this](const franka::RobotState& state, const franka::Duration& /*period*/) {
-          {
-            std::lock_guard<std::mutex> lock(read_mutex_);
-            current_state_ = state;
-          }
-          std::lock_guard<std::mutex> lock(write_mutex_);
-          franka::Torques out(tau_command_);
-          out.motion_finished = finish_;
-          return out;
-        },
-        true, franka::kMaxCutoffFrequency);
+    try {
+      robot_->control(
+          [this](const franka::RobotState& state, const franka::Duration& /*period*/) {
+            {
+              std::lock_guard<std::mutex> lock(read_mutex_);
+              current_state_ = state;
+            }
+            std::lock_guard<std::mutex> lock(write_mutex_);
+            franka::Torques out(tau_command_);
+            out.motion_finished = finish_;
+            return out;
+          },
+          true, franka::kMaxCutoffFrequency);
+    } catch (const franka::ControlException& e) {
+      // libfranka: Move command rejected: command not possible in the current mode ("User
+      // stopped")!
+      RCLCPP_INFO_STREAM(rclcpp::get_logger("FrankaHardwareInterface"),
+                         "Exception from control thread: " << std::string(e.what())
+                                                           << " (logs: " << e.log.size() << ")");
+      for (const franka::Record& log : e.log) {
+        RCLCPP_WARN_STREAM(rclcpp::get_logger("FrankaHardwareInterface"),
+                           "mode " << log.state.robot_mode);
+      }
+    }
   };
   control_thread_ = std::make_unique<std::thread>(kTorqueControl);
 }
