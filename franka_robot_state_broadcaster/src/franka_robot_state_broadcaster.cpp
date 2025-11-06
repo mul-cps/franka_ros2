@@ -112,7 +112,6 @@ controller_interface::return_type FrankaRobotStateBroadcaster::update(
     // publish state
     if (!realtime_franka_state_publisher->try_publish(msg_state)) {
       RCLCPP_ERROR(get_node()->get_logger(), "Cannot publish franka state.");
-      return controller_interface::return_type::ERROR;
     }
   }
 
