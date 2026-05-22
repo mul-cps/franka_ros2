@@ -12,6 +12,7 @@ jobs:
       matrix:
         include:
         - {distribution: "jazzy", WARNING_AS_ERROR: "ON"}
+        - {distribution: "lyrical", WARNING_AS_ERROR: "ON"}
 
     container:
       image: ros:${{ matrix.distribution }}-ros-core
