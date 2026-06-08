@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.22)
 project(franka_gripper)
 
 if(NOT CMAKE_CXX_STANDARD)
