@@ -64,7 +64,7 @@ controller_interface::CallbackReturn FrankaRobotStateBroadcaster::on_configure(
   params = param_listener->get_params();
 
   franka_robot_state = std::make_unique<franka_semantic_components::FrankaRobotState>(
-      franka_semantic_components::FrankaRobotState(params.arm_id + "/" + state_interface_name));
+      params.arm_id + "/" + state_interface_name);
 
   try {
     franka_state_publisher = get_node()->create_publisher<franka_msgs::msg::FrankaRobotState>(
