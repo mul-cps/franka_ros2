@@ -65,13 +65,13 @@ void MoveToStartExampleControllerTest::SetUpController() {
   std::vector<LoanedCommandInterface> command_ifs;
   std::vector<LoanedStateInterface> state_ifs;
 
-  command_ifs.emplace_back(joint_1_pos_cmd_);
-  command_ifs.emplace_back(joint_2_pos_cmd_);
-  command_ifs.emplace_back(joint_3_pos_cmd_);
-  command_ifs.emplace_back(joint_4_pos_cmd_);
-  command_ifs.emplace_back(joint_5_pos_cmd_);
-  command_ifs.emplace_back(joint_6_pos_cmd_);
-  command_ifs.emplace_back(joint_7_pos_cmd_);
+  command_ifs.emplace_back(joint_1_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_2_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_3_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_4_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_5_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_6_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_7_pos_cmd_, nullptr);
 
   state_ifs.emplace_back(joint_1_pos_state_);
   state_ifs.emplace_back(joint_1_vel_state_);
@@ -145,11 +145,11 @@ TEST_F(MoveToStartExampleControllerTest, correct_setup_on_update_expect_ok) {
 
   ASSERT_EQ(controller_->update(time, duration), controller_interface::return_type::OK);
 
-  exp_val_near(joint_1_pos_cmd_);
-  exp_val_near(joint_2_pos_cmd_);
-  exp_val_near(joint_3_pos_cmd_);
-  exp_val_near(joint_4_pos_cmd_);
-  exp_val_near(joint_5_pos_cmd_);
-  exp_val_near(joint_6_pos_cmd_);
-  exp_val_near(joint_7_pos_cmd_);
+  exp_val_near(*joint_1_pos_cmd_);
+  exp_val_near(*joint_2_pos_cmd_);
+  exp_val_near(*joint_3_pos_cmd_);
+  exp_val_near(*joint_4_pos_cmd_);
+  exp_val_near(*joint_5_pos_cmd_);
+  exp_val_near(*joint_6_pos_cmd_);
+  exp_val_near(*joint_7_pos_cmd_);
 }

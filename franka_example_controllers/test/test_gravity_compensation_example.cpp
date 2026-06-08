@@ -56,13 +56,13 @@ class TestGravityCompensationExample : public ::testing::Test {
                                                  "joint5", "joint6", "joint7"};
   std::vector<double> joint_commands_ = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
-  CommandInterface joint_1_pos_cmd_{joint_names_[0], HW_IF_EFFORT, &joint_commands_[0]};
-  CommandInterface joint_2_pos_cmd_{joint_names_[1], HW_IF_EFFORT, &joint_commands_[1]};
-  CommandInterface joint_3_pos_cmd_{joint_names_[2], HW_IF_EFFORT, &joint_commands_[2]};
-  CommandInterface joint_4_pos_cmd_{joint_names_[3], HW_IF_EFFORT, &joint_commands_[3]};
-  CommandInterface joint_5_pos_cmd_{joint_names_[4], HW_IF_EFFORT, &joint_commands_[4]};
-  CommandInterface joint_6_pos_cmd_{joint_names_[5], HW_IF_EFFORT, &joint_commands_[5]};
-  CommandInterface joint_7_pos_cmd_{joint_names_[6], HW_IF_EFFORT, &joint_commands_[6]};
+  CommandInterface::SharedPtr joint_1_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[0], HW_IF_EFFORT, &joint_commands_[0]);
+  CommandInterface::SharedPtr joint_2_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[1], HW_IF_EFFORT, &joint_commands_[1]);
+  CommandInterface::SharedPtr joint_3_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[2], HW_IF_EFFORT, &joint_commands_[2]);
+  CommandInterface::SharedPtr joint_4_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[3], HW_IF_EFFORT, &joint_commands_[3]);
+  CommandInterface::SharedPtr joint_5_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[4], HW_IF_EFFORT, &joint_commands_[4]);
+  CommandInterface::SharedPtr joint_6_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[5], HW_IF_EFFORT, &joint_commands_[5]);
+  CommandInterface::SharedPtr joint_7_pos_cmd_ = std::make_shared<CommandInterface>(joint_names_[6], HW_IF_EFFORT, &joint_commands_[6]);
 };
 
 void TestGravityCompensationExample::SetUpTestSuite() {
@@ -94,13 +94,13 @@ void TestGravityCompensationExample::SetUpController() {
   );
   ASSERT_EQ(result, controller_interface::return_type::OK);
   std::vector<LoanedCommandInterface> command_ifs;
-  command_ifs.emplace_back(joint_1_pos_cmd_);
-  command_ifs.emplace_back(joint_2_pos_cmd_);
-  command_ifs.emplace_back(joint_3_pos_cmd_);
-  command_ifs.emplace_back(joint_4_pos_cmd_);
-  command_ifs.emplace_back(joint_5_pos_cmd_);
-  command_ifs.emplace_back(joint_6_pos_cmd_);
-  command_ifs.emplace_back(joint_7_pos_cmd_);
+  command_ifs.emplace_back(joint_1_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_2_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_3_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_4_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_5_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_6_pos_cmd_, nullptr);
+  command_ifs.emplace_back(joint_7_pos_cmd_, nullptr);
 
   controller_->get_node()->declare_parameter("joints", std::vector<std::string>{});
 
@@ -146,11 +146,11 @@ TEST_F(TestGravityCompensationExample, given_joints_and_interface_when_update_ex
             controller_interface::return_type::OK);
 
   // check joint commands are updated to zero torque value
-  assert_val_eq(joint_1_pos_cmd_);
-  assert_val_eq(joint_2_pos_cmd_);
-  assert_val_eq(joint_3_pos_cmd_);
-  assert_val_eq(joint_4_pos_cmd_);
-  assert_val_eq(joint_5_pos_cmd_);
-  assert_val_eq(joint_6_pos_cmd_);
-  assert_val_eq(joint_7_pos_cmd_);
+  assert_val_eq(*joint_1_pos_cmd_);
+  assert_val_eq(*joint_2_pos_cmd_);
+  assert_val_eq(*joint_3_pos_cmd_);
+  assert_val_eq(*joint_4_pos_cmd_);
+  assert_val_eq(*joint_5_pos_cmd_);
+  assert_val_eq(*joint_6_pos_cmd_);
+  assert_val_eq(*joint_7_pos_cmd_);
 }
