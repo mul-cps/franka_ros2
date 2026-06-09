@@ -34,4 +34,4 @@ jobs:
       with:
         target-ros2-distro: ${{ matrix.distribution }}
         vcs-repo-file-url: ${{ github.workspace }}/.github/workflows/libfranka.repos
-        extra-cmake-args: "-D CMAKE_BUILD_TYPE=Release -D BUILD_TESTS=OFF -D BUILD_TESTING=ON -D BUILD_EXAMPLES=OFF -D CMAKE_COMPILE_WARNING_AS_ERROR=${{ matrix.WARNING_AS_ERROR }}"
+        extra-cmake-args: "-D CMAKE_BUILD_TYPE=Release -D BUILD_EXAMPLES=OFF -D CMAKE_COMPILE_WARNING_AS_ERROR=${{ matrix.WARNING_AS_ERROR }}"
