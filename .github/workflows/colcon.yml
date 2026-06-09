@@ -35,4 +35,5 @@ jobs:
       with:
         target-ros2-distro: ${{ matrix.distribution }}
         vcs-repo-file-url: ${{ github.workspace }}/.github/workflows/libfranka.repos
+        rosdep-skip-keys: "moveit_ros_move_group moveit_resources_panda_moveit_config moveit_kinematics moveit_planners_ompl moveit_simple_controller_manager moveit_ros_visualization"
         extra-cmake-args: "-D CMAKE_BUILD_TYPE=Release -D BUILD_EXAMPLES=OFF -D CMAKE_COMPILE_WARNING_AS_ERROR=${{ matrix.WARNING_AS_ERROR }}"
