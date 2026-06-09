@@ -83,15 +83,11 @@ void TestGravityCompensationExample::TearDown() {
 }
 
 void TestGravityCompensationExample::SetUpController() {
-  const auto result = controller_->init(
-    "test_gravitiy_compensation_example"
-#if controller_interface_VERSION_MAJOR >= 4
-    , ros2_control_test_assets::minimal_robot_urdf      // urdf
-    , 0                                                 // cm_update_rate
-    , {}                                                // node_namespace
-    , rclcpp::NodeOptions().enable_logger_service(true) // node_options
-#endif
-  );
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name="test_gravitiy_compensation_example";
+  params.robot_description=ros2_control_test_assets::minimal_robot_urdf;  // urdf
+  params.node_options=rclcpp::NodeOptions().enable_logger_service(true);  // node_options
+  const auto result = controller_->init(params);
   ASSERT_EQ(result, controller_interface::return_type::OK);
   std::vector<LoanedCommandInterface> command_ifs;
   command_ifs.emplace_back(joint_1_pos_cmd_, nullptr);
