@@ -119,10 +119,6 @@ if(BUILD_TESTING)
         controller_manager::controller_manager
         ros2_control_test_assets::ros2_control_test_assets
     )
-    target_compile_definitions(
-        ${PROJECT_NAME}_gravity_test
-        PUBLIC controller_interface_VERSION_MAJOR=${controller_interface_VERSION_MAJOR}
-    )
     if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
         target_compile_definitions(${PROJECT_NAME}_gravity_test PRIVATE HW_HAS_GET_OPT)
     endif()
@@ -133,10 +129,6 @@ if(BUILD_TESTING)
         ${PROJECT_NAME}
         controller_manager::controller_manager
         ros2_control_test_assets::ros2_control_test_assets
-    )
-    target_compile_definitions(
-        ${PROJECT_NAME}_move_to_start_test
-        PUBLIC controller_interface_VERSION_MAJOR=${controller_interface_VERSION_MAJOR}
     )
     if(${hardware_interface_VERSION} VERSION_GREATER_EQUAL "4.27")
         target_compile_definitions(${PROJECT_NAME}_move_to_start_test PRIVATE HW_HAS_GET_OPT)

@@ -116,10 +116,6 @@ if(BUILD_TESTING)
         hardware_interface::mock_components
         ros2_control_test_assets::ros2_control_test_assets
     )
-    target_compile_definitions(
-        ${PROJECT_NAME}_test
-        PUBLIC controller_interface_VERSION_MAJOR=${controller_interface_VERSION_MAJOR}
-    )
 
     ament_add_gmock(test_load_franka_robot_state_broadcaster test/test_load_franka_robot_state_broadcaster.cpp)
     target_include_directories(test_load_franka_robot_state_broadcaster PRIVATE include)
